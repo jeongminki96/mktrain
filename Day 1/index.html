@@ -9,6 +9,7 @@
   <meta name="description" content="서울 망원동 골목 끝 스페셜티 핸드드립 카페 모닝브루. 미리 주문하고 도착하면 바로 픽업. 매일 아침 직접 구운 스콘과 당일 선별 원두. 망원역 2번 출구 도보 6분.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://jeongminki96.github.io/mktrain/">
+  <link rel="sitemap" type="application/xml" href="/mktrain/sitemap.xml">
 
   <!-- SEO: Open Graph -->
   <meta property="og:type" content="website">
@@ -629,6 +630,45 @@
     }
     footer a { color: var(--caramel); text-decoration: none; }
 
+    /* ─── FAQ ─── */
+    #faq { background: var(--cream); padding: 5rem 1.5rem 6rem; }
+    .faq-wrap { max-width: 640px; margin: 0 auto; }
+    .faq-header { margin-bottom: 2.5rem; }
+    .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .faq-item {
+      background: #fff;
+      border: 1px solid var(--latte);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(26,18,8,.05);
+    }
+    .faq-q {
+      width: 100%; text-align: left;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; padding: 1.15rem 1.4rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.9rem; font-weight: 500; color: var(--espresso);
+      line-height: 1.5;
+      transition: background 0.2s;
+    }
+    .faq-q:hover { background: var(--pale); }
+    .faq-q[aria-expanded="true"] { background: var(--pale); }
+    .faq-icon {
+      width: 22px; height: 22px; min-width: 22px; border-radius: 50%;
+      background: var(--latte); display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s, background 0.2s;
+    }
+    .faq-q[aria-expanded="true"] .faq-icon { transform: rotate(45deg); background: var(--caramel); }
+    .faq-q[aria-expanded="true"] .faq-icon svg { stroke: #fff; }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.3s ease;
+      font-size: 0.875rem; color: var(--brown); line-height: 1.85;
+      padding: 0 1.4rem;
+    }
+    .faq-a.open { max-height: 300px; padding: 0 1.4rem 1.2rem; }
+
     /* ─── KEYFRAMES ─── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(26px); }
@@ -833,6 +873,70 @@
     </div>
   </section>
 
+  <!-- ── FAQ ── -->
+  <section id="faq">
+    <div class="faq-wrap">
+      <div class="faq-header">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title">자주 묻는 질문</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span itemprop="name">모닝브루는 몇 시에 문을 여나요?</span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </button>
+          <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <div itemprop="text">화요일부터 일요일까지 오전 8시에 열고 오후 8시에 닫습니다. 월요일은 정기 휴무입니다.</div>
+          </div>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span itemprop="name">픽업 예약은 어떻게 하나요?</span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </button>
+          <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <div itemprop="text">카카오 채널 또는 홈페이지 예약 폼으로 미리 주문하시면, 도착하는 즉시 픽업하실 수 있습니다. 대기 없이 원하는 시간에 바로 받아가실 수 있습니다.</div>
+          </div>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span itemprop="name">망원역에서 모닝브루까지 어떻게 가나요?</span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </button>
+          <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <div itemprop="text">지하철 6호선 망원역 2번 출구에서 도보로 약 6분 거리입니다. 서울 마포구 망원동 골목 안쪽에 위치해 있습니다.</div>
+          </div>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span itemprop="name">오늘의 원두는 어디서 확인하나요?</span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </button>
+          <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <div itemprop="text">매일 오전 7시 30분 이전에 인스타그램 스토리(@morningbrew_official)에 당일 원두 산지와 스콘 재고를 공지합니다. 방문 전 미리 확인하세요.</div>
+          </div>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span itemprop="name">핸드드립 커피 가격이 얼마인가요?</span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </button>
+          <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <div itemprop="text">핸드드립 커피 5,500원, 오늘의 원두 4,500원, 수제 스콘 3,500원, 계절 과일 에이드 6,000원입니다. 스콘은 매일 아침 직접 구워 재고가 소진될 수 있습니다.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- 토스트 -->
   <div class="toast" id="toast"></div>
 
@@ -978,6 +1082,18 @@
       const ampm = hour < 12 ? '오전' : '오후';
       const h12  = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
       return `${ampm} ${h12}:${m}`;
+    }
+
+    function toggleFaq(btn) {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      document.querySelectorAll('.faq-q').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        b.nextElementSibling.classList.remove('open');
+      });
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        btn.nextElementSibling.classList.add('open');
+      }
     }
 
     function showToast(msg) {
