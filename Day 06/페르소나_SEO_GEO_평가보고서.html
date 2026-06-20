@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>페르소나별 SEO·GEO 평가 보고서 — 모닝브루 Day 6</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:#FAF7F2; --pale:#F0E8D8; --espresso:#1A1208;
+      --caramel:#C17B3A; --brown:#7A5C3A; --latte:#E8D5BC;
+      --red:#C0392B; --green:#2E7D52; --yellow:#9A6F00; --blue:#1A5C9A;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--cream);color:var(--espresso);font-family:'Noto Sans KR',sans-serif;font-weight:300;line-height:1.8;}
+
+    /* HEADER */
+    .doc-header{background:var(--espresso);padding:3.5rem 2rem 3rem;text-align:center;}
+    .doc-label{font-size:.68rem;letter-spacing:.35em;text-transform:uppercase;color:var(--caramel);margin-bottom:.9rem;font-weight:400;}
+    .doc-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,7vw,2.8rem);font-weight:400;color:var(--latte);line-height:1.2;margin-bottom:1.2rem;}
+    .doc-title em{color:var(--caramel);font-style:italic;}
+    .doc-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem 1.2rem;font-size:.78rem;color:rgba(250,247,242,.45);}
+
+    /* OVERVIEW SCORES */
+    .overview{background:var(--pale);padding:3rem 1.5rem;}
+    .ov-title{text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:var(--brown);margin-bottom:2rem;}
+    .ov-avg{text-align:center;margin-bottom:2rem;}
+    .ov-avg-num{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:var(--caramel);line-height:1;}
+    .ov-avg-label{font-size:.78rem;color:var(--brown);margin-top:.3rem;}
+    .ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.875rem;max-width:900px;margin:0 auto;}
+    .ov-card{background:#fff;border-radius:16px;padding:1.25rem 1rem;text-align:center;box-shadow:0 2px 10px rgba(26,18,8,.06);border:1px solid var(--latte);}
+    .ov-persona{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brown);font-weight:500;margin-bottom:.6rem;}
+    .ov-score{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;line-height:1;margin-bottom:.3rem;}
+    .ov-score.s-high{color:var(--green);}
+    .ov-score.s-mid{color:var(--yellow);}
+    .ov-score.s-low{color:var(--red);}
+    .ov-grade{display:inline-block;padding:.15rem .6rem;border-radius:100px;font-size:.72rem;font-weight:500;}
+    .g-b{background:rgba(46,125,82,.1);color:var(--green);}
+    .g-cp{background:rgba(193,123,58,.12);color:var(--caramel);}
+    .g-c{background:rgba(154,111,0,.1);color:var(--yellow);}
+    .g-f{background:rgba(192,57,43,.1);color:var(--red);}
+
+    /* BODY */
+    .doc-body{max-width:860px;margin:0 auto;padding:3rem 1.5rem 5rem;}
+    .sec-label{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--caramel);font-weight:400;margin-bottom:.4rem;}
+    .sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,5vw,2.2rem);font-weight:400;color:var(--espresso);margin-bottom:.5rem;}
+    .divider{width:36px;height:1.5px;background:var(--caramel);margin:.75rem 0 1.75rem;}
+
+    /* PERSONA CARDS */
+    .persona-card{background:#fff;border:1px solid var(--latte);border-radius:22px;margin-bottom:1.5rem;overflow:hidden;box-shadow:0 2px 12px rgba(26,18,8,.07);}
+    .pc-head{display:flex;align-items:center;gap:1rem;padding:1.4rem 1.6rem;border-bottom:1px solid var(--pale);}
+    .pc-avatar{width:48px;height:48px;min-width:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+    .av-googlebot{background:rgba(26,92,154,.1);}
+    .av-ai{background:rgba(46,125,82,.1);}
+    .av-customer{background:rgba(193,123,58,.12);}
+    .av-expert{background:rgba(154,111,0,.1);}
+    .av-naver{background:rgba(3,199,90,.1);}
+    .pc-info{flex:1;}
+    .pc-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;color:var(--espresso);}
+    .pc-desc{font-size:.75rem;color:var(--brown);}
+    .pc-score-wrap{text-align:right;}
+    .pc-score{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;line-height:1;}
+    .pc-body{padding:1.4rem 1.6rem;}
+
+    .sub-title{font-size:.78rem;font-weight:500;color:var(--brown);letter-spacing:.05em;text-transform:uppercase;margin:1.1rem 0 .6rem;}
+    .sub-title:first-child{margin-top:0;}
+
+    .tag{display:inline-block;padding:.12rem .5rem;border-radius:6px;font-size:.72rem;font-weight:500;}
+    .tag-ok{background:rgba(46,125,82,.1);color:var(--green);}
+    .tag-warn{background:rgba(154,111,0,.1);color:var(--yellow);}
+    .tag-bad{background:rgba(192,57,43,.1);color:var(--red);}
+
+    ul.dot-list{padding-left:0;list-style:none;display:flex;flex-direction:column;gap:.45rem;}
+    ul.dot-list li{font-size:.84rem;color:var(--espresso);padding-left:1.3rem;position:relative;line-height:1.75;}
+    ul.dot-list li::before{content:"·";position:absolute;left:0;color:var(--caramel);font-size:1.1rem;line-height:1.5;}
+    ul.dot-list li strong{font-weight:500;}
+
+    .journey-grid{display:grid;grid-template-columns:1fr;gap:.6rem;margin:.6rem 0;}
+    .journey-item{background:var(--pale);border-radius:12px;padding:.85rem 1.1rem;font-size:.84rem;color:var(--espresso);line-height:1.75;}
+    .journey-step{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--caramel);font-weight:500;margin-bottom:.3rem;}
+
+    .score-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.6rem 0;}
+    .sb-item{background:var(--pale);border-radius:12px;padding:.85rem 1rem;}
+    .sb-area{font-size:.7rem;font-weight:500;color:var(--brown);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem;}
+    .sb-score{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--espresso);}
+    .sb-note{font-size:.76rem;color:var(--brown);line-height:1.6;margin-top:.3rem;}
+
+    .verdict-box{background:var(--espresso);border-radius:14px;padding:1rem 1.25rem;margin-top:1.1rem;}
+    .verdict-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--caramel);margin-bottom:.35rem;}
+    .verdict-text{font-size:.875rem;color:var(--latte);line-height:1.75;font-style:italic;}
+
+    /* COMMON TABLE */
+    .common-section{margin-top:3.5rem;}
+    .common-table{width:100%;border-collapse:collapse;font-size:.83rem;}
+    .common-table thead tr{background:var(--espresso);}
+    .common-table thead th{padding:.8rem 1rem;color:var(--latte);font-weight:500;font-size:.78rem;text-align:left;letter-spacing:.03em;}
+    .common-table thead th:first-child{border-radius:12px 0 0 0;}
+    .common-table thead th:last-child{border-radius:0 12px 0 0;}
+    .common-table tbody tr{border-bottom:1px solid var(--latte);background:#fff;}
+    .common-table tbody tr:nth-child(even){background:var(--pale);}
+    .common-table tbody tr:last-child{border-bottom:none;}
+    .common-table tbody td{padding:.8rem 1rem;vertical-align:middle;}
+    .dot-count{font-size:.82rem;color:var(--brown);}
+
+    /* FOOTER */
+    .doc-footer{background:var(--espresso);color:rgba(250,247,242,.35);text-align:center;padding:1.75rem 1.5rem;font-size:.75rem;line-height:2;}
+    .doc-footer span{color:var(--caramel);}
+
+    @media(max-width:520px){
+      .ov-grid{grid-template-columns:1fr 1fr;}
+      .score-breakdown{grid-template-columns:1fr;}
+      .pc-head{flex-wrap:wrap;}
+    }
+  </style>
+</head>
+<body>
+
+<header class="doc-header">
+  <p class="doc-label">Persona Evaluation Report · Day 06 · 2026-06-23</p>
+  <h1 class="doc-title">페르소나별 <em>SEO · GEO</em><br>평가 보고서</h1>
+  <div class="doc-meta">
+    <span>🤖 5개 서브에이전트 병렬 실행</span>
+    <span>📄 index.html 기준</span>
+    <span>🔍 SEO·GEO 2차 개선 후 평가</span>
+  </div>
+</header>
+
+<!-- OVERVIEW -->
+<div class="overview">
+  <p class="ov-title">종합 점수 — 5개 페르소나 평균</p>
+  <div class="ov-avg">
+    <div class="ov-avg-num">69</div>
+    <div class="ov-avg-label">/ 100 &nbsp;·&nbsp; 종합 등급 C+</div>
+  </div>
+  <div class="ov-grid">
+    <div class="ov-card">
+      <p class="ov-persona">구글봇</p>
+      <p class="ov-score s-mid">74</p>
+      <p style="font-size:.7rem;color:var(--brown);margin:.2rem 0 .5rem">/100</p>
+      <span class="ov-grade g-cp">C+</span>
+    </div>
+    <div class="ov-card">
+      <p class="ov-persona">생성형 AI</p>
+      <p class="ov-score s-mid">74</p>
+      <p style="font-size:.7rem;color:var(--brown);margin:.2rem 0 .5rem">/100</p>
+      <span class="ov-grade g-b">B</span>
+    </div>
+    <div class="ov-card">
+      <p class="ov-persona">타깃 고객</p>
+      <p class="ov-score s-mid">72</p>
+      <p style="font-size:.7rem;color:var(--brown);margin:.2rem 0 .5rem">/100</p>
+      <span class="ov-grade g-b">B</span>
+    </div>
+    <div class="ov-card">
+      <p class="ov-persona">SEO 컨설턴트</p>
+      <p class="ov-score s-mid">71</p>
+      <p style="font-size:.7rem;color:var(--brown);margin:.2rem 0 .5rem">/100</p>
+      <span class="ov-grade g-b">B</span>
+    </div>
+    <div class="ov-card">
+      <p class="ov-persona">네이버 로컬</p>
+      <p class="ov-score s-low">52</p>
+      <p style="font-size:.7rem;color:var(--brown);margin:.2rem 0 .5rem">/100</p>
+      <span class="ov-grade g-c">C</span>
+    </div>
+  </div>
+</div>
+
+<div class="doc-body">
+
+  <p class="sec-label">Persona Reviews</p>
+  <h2 class="sec-title">페르소나별 평가 상세</h2>
+  <div class="divider"></div>
+
+  <!-- 1. 구글봇 -->
+  <div class="persona-card">
+    <div class="pc-head">
+      <div class="pc-avatar av-googlebot">🤖</div>
+      <div class="pc-info">
+        <p class="pc-name">구글봇</p>
+        <p class="pc-desc">Google Crawler — 기술적·기계적 파싱 관점</p>
+      </div>
+      <div class="pc-score-wrap">
+        <div class="pc-score" style="color:var(--yellow)">74</div>
+        <span class="ov-grade g-cp">C+</span>
+      </div>
+    </div>
+    <div class="pc-body">
+      <p class="sub-title">✅ 잘 된 점</p>
+      <ul class="dot-list">
+        <li>JSON-LD CafeOrCoffeeShop 스키마가 Menu·MenuItem·OpeningHoursSpecification·GeoCoordinates까지 포함 — 구조화 데이터 완성도 높음</li>
+        <li>FAQPage를 Microdata 방식으로 이중 구현 → Rich Result 트리거 경로 두 개 확보</li>
+        <li>robots.txt에 Sitemap URL 명시, sitemap.xml 유효한 XML 형식으로 존재</li>
+      </ul>
+      <p class="sub-title">❌ 문제점</p>
+      <ul class="dot-list">
+        <li><strong>이미지 0개</strong> — &lt;img&gt; 태그 전무, alt 텍스트 없음, Google Image Search 완전 비가시</li>
+        <li>JSON-LD streetAddress <span class="tag tag-bad">"망원동 골목 끝"</span> — postalCode·도로명 주소 누락, 로컬 신뢰도 하락</li>
+        <li>og:image · twitter:image 미존재 → SNS 썸네일 없음, Google Discover 사실상 제외</li>
+        <li>sitemap.xml lastmod <span class="tag tag-warn">2026-06-23 (미래 날짜)</span> → 크롤러 신뢰도 저하</li>
+        <li>예약 폼이 JS 동적 콘텐츠 → 초기 HTML 파싱 시 실질 콘텐츠로 미인식</li>
+      </ul>
+      <div class="verdict-box">
+        <p class="verdict-label">Verdict</p>
+        <p class="verdict-text">"JSON-LD와 FAQ 구조화 데이터 구현 수준은 높으나, 이미지 전무·NAP 허구값·og:image 누락이 로컬 SEO 및 이미지 검색 신호를 완전히 차단하여 실전 순위 경쟁력이 낮음."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 생성형 AI -->
+  <div class="persona-card">
+    <div class="pc-head">
+      <div class="pc-avatar av-ai">💬</div>
+      <div class="pc-info">
+        <p class="pc-name">생성형 AI 엔진</p>
+        <p class="pc-desc">ChatGPT / Perplexity — 정보 추출·인용 가능성 관점</p>
+      </div>
+      <div class="pc-score-wrap">
+        <div class="pc-score" style="color:var(--green)">74</div>
+        <span class="ov-grade g-b">B</span>
+      </div>
+    </div>
+    <div class="pc-body">
+      <p class="sub-title">✅ 답변 가능한 질문</p>
+      <ul class="dot-list">
+        <li>"모닝브루 영업시간이 어떻게 돼요?" → JSON-LD + FAQPage + 본문 삼중 일치, 고신뢰 답변</li>
+        <li>"픽업 예약 방법 알려줘" → FAQPage acceptedAnswer 직접 인용 가능</li>
+        <li>"망원동 핸드드립 커피 가격" → MenuItem + Offer 4종 파싱, 표 형태 답변 생성 가능</li>
+      </ul>
+      <p class="sub-title">❌ 답변 불가한 질문</p>
+      <ul class="dot-list">
+        <li>"정확한 주소 알려줘" → streetAddress 자연어 서술, 도로명·우편번호 없음</li>
+        <li>"주차 가능한가요?" → amenityFeature 정보 전무</li>
+        <li>"오늘 자리 있나요?" → 좌석 수·혼잡도 정보 없음</li>
+        <li>"와이파이 돼요?" → 편의시설 정보 전무</li>
+      </ul>
+      <p class="sub-title">⚠️ 신뢰도 문제</p>
+      <ul class="dot-list">
+        <li>전화번호 <span class="tag tag-bad">02-123-4567</span> 가상 번호 → AI 인용 시 사용자 연락 실패</li>
+        <li>JSON-LD에 <code>@id</code> 없음 → Knowledge Graph 연결 약화</li>
+        <li>SNS URL이 검증되지 않은 가상 링크 → Perplexity가 404 확인 시 신뢰 페널티</li>
+      </ul>
+      <div class="verdict-box">
+        <p class="verdict-label">Verdict</p>
+        <p class="verdict-text">"JSON-LD + FAQPage 이중 구조화로 영업시간·픽업 방법·가격 답변에는 충분히 활용 가능하나, 실 도로명 주소와 실제 연락처가 없어 AI가 '신뢰할 수 있는 출처'로 인용하기에는 치명적 허점이 남아 있다."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 타깃 고객 -->
+  <div class="persona-card">
+    <div class="pc-head">
+      <div class="pc-avatar av-customer">☕</div>
+      <div class="pc-info">
+        <p class="pc-name">박지수 (32세 직장인)</p>
+        <p class="pc-desc">타깃 페르소나 — 망원동 거주, 출근 전 픽업 필요, 스타벅스 사이렌오더 사용자</p>
+      </div>
+      <div class="pc-score-wrap">
+        <div class="pc-score" style="color:var(--green)">72</div>
+        <span class="ov-grade g-b">B</span>
+      </div>
+    </div>
+    <div class="pc-body">
+      <p class="sub-title">🚶 검색 여정 단계별 경험</p>
+      <div class="journey-grid">
+        <div class="journey-item">
+          <p class="journey-step">검색 단계</p>
+          title + description에서 "미리 주문하고 바로 픽업" 확인 → 클릭 의지 생김. OG 태그도 잘 세팅되어 SNS 미리보기도 괜찮음.
+        </div>
+        <div class="journey-item">
+          <p class="journey-step">클릭 단계</p>
+          Hero에 픽업 메시지는 바로 보이지만, 영업시간이 첫 화면에 없어 "지금 열었나?" 5초 안에 확인 불가. 스크롤 필요.
+        </div>
+        <div class="journey-item">
+          <p class="journey-step">페이지 내 단계</p>
+          예약 폼이 4번째 섹션 맨 하단. 폼 입력 후 카페에 실제 전달됐는지 불분명 (로컬스토리지에만 저장). 지도 링크 없음.
+        </div>
+      </div>
+      <p class="sub-title">✅ 좋았던 점</p>
+      <ul class="dot-list">
+        <li>"미리 주문, 도착하면 바로 픽업" 문구가 Hero 정중앙 — 내 상황과 딱 맞는 카페임을 첫눈에 알았다</li>
+        <li>영업시간이 스크롤하면 바로 명확하게 나온다</li>
+        <li>FAQ에 "오늘의 원두 어디서 확인?" 답변이 있어 스콘 허탕 막는 법을 알 수 있었다</li>
+      </ul>
+      <p class="sub-title">❌ 불편했던 점</p>
+      <ul class="dot-list">
+        <li>Hero에 영업시간 없음 — "지금 열었나?" 확인을 두 번 스크롤해야 한다</li>
+        <li>픽업 예약 폼이 맨 하단 — 메뉴·오시는 길·CTA 세 섹션을 지나야 도달</li>
+        <li>예약 후 카페 측 전달 여부 불명확 — 로컬스토리지에만 저장, 확인 피드백 없음</li>
+        <li>"오시는 길"에 지도 링크 없음 — 처음 가는 골목 카페, 지도 앱 바로 열려야 한다</li>
+        <li>스콘 재고 현황 실시간 확인 불가 — "재고 있음/소진" 배지 하나만 있어도 됐다</li>
+      </ul>
+      <div class="verdict-box">
+        <p class="verdict-label">Verdict (박지수 목소리)</p>
+        <p class="verdict-text">"픽업 된다고 해서 눌렀는데, 폼이 맨 아래 있고 예약이 카페에 실제로 전달되는지도 모르겠어서 결국 카카오 채널로 따로 문자 보냈다 — Hero에 영업 중 배지랑 지도 링크만 있었어도 진작 예약했을 텐데."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SEO 컨설턴트 -->
+  <div class="persona-card">
+    <div class="pc-head">
+      <div class="pc-avatar av-expert">📊</div>
+      <div class="pc-info">
+        <p class="pc-name">SEO 전문 컨설턴트</p>
+        <p class="pc-desc">10년 경력 · GSC·Ahrefs·Semrush 실무 · E-E-A-T·로컬 SEO 전문</p>
+      </div>
+      <div class="pc-score-wrap">
+        <div class="pc-score" style="color:var(--yellow)">71</div>
+        <span class="ov-grade g-b">B</span>
+      </div>
+    </div>
+    <div class="pc-body">
+      <p class="sub-title">📐 영역별 점수</p>
+      <div class="score-breakdown">
+        <div class="sb-item">
+          <p class="sb-area">기술 SEO</p>
+          <p class="sb-score">20 <span style="font-size:1rem;color:var(--brown)">/ 25</span></p>
+          <p class="sb-note">JSON-LD·OG·Twitter Card 완비, og:image + favicon 없음</p>
+        </div>
+        <div class="sb-item">
+          <p class="sb-area">온페이지 SEO</p>
+          <p class="sb-score">17 <span style="font-size:1rem;color:var(--brown)">/ 25</span></p>
+          <p class="sb-note">title·description 우수, H2에 "망원동 카페" 키워드 0개, 본문 약 600자</p>
+        </div>
+        <div class="sb-item">
+          <p class="sb-area">로컬 SEO</p>
+          <p class="sb-score">16 <span style="font-size:1rem;color:var(--brown)">/ 25</span></p>
+          <p class="sb-note">GeoCoordinates 있음, 실 도로명 주소·GMB·네이버 플레이스 없음</p>
+        </div>
+        <div class="sb-item">
+          <p class="sb-area">콘텐츠 SEO</p>
+          <p class="sb-score">18 <span style="font-size:1rem;color:var(--brown)">/ 25</span></p>
+          <p class="sb-note">FAQ 품질 양호, AggregateRating 0건, 텍스트 깊이 부족</p>
+        </div>
+      </div>
+      <p class="sub-title">❌ 전략적 문제점</p>
+      <ul class="dot-list">
+        <li><strong>og:image 완전 부재</strong> → SNS CTR 최대 3~5배 손실, Google Discover 사실상 제외</li>
+        <li><strong>실 도로명 주소 없음</strong> → NAP 일관성 0, 로컬 팩 진입 불가</li>
+        <li><strong>본문 텍스트 약 600자</strong> → 경쟁 페이지(1,500~3,000자) 대비 키워드 관련성 열위</li>
+        <li><strong>AggregateRating 없음</strong> → 스타 리치 결과 미노출, SERP CTR 최대 25~35% 손실</li>
+        <li><strong>네이버 플레이스 sameAs 없음</strong> → 국내 검색 점유율 1위 채널 단절</li>
+        <li>sitemap.xml lastmod 미래 날짜 → GSC 색인 우선순위 불이익</li>
+      </ul>
+      <p class="sub-title">🎯 당장 1순위 액션</p>
+      <ul class="dot-list">
+        <li>JSON-LD streetAddress에 실제 도로명 주소 + postalCode 추가 → 네이버 플레이스 등록 → sameAs 추가 (로컬 SEO ROI 최고)</li>
+      </ul>
+      <div class="verdict-box">
+        <p class="verdict-label">Verdict</p>
+        <p class="verdict-text">"기술 구현 기반은 탄탄하지만, 실 주소 누락·og:image 없음·본문 텍스트 빈약이라는 로컬 SEO 3대 치명상이 동시에 존재하여 '망원동 카페' 지역 검색에서 경쟁 카페를 이기려면 아직 갈 길이 멀다."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 네이버 로컬 -->
+  <div class="persona-card">
+    <div class="pc-head">
+      <div class="pc-avatar av-naver">🗺️</div>
+      <div class="pc-info">
+        <p class="pc-name">네이버 로컬 검색</p>
+        <p class="pc-desc">한국 카페 검색의 80%가 이 경로 — 네이버 지도·플레이스 알고리즘 관점</p>
+      </div>
+      <div class="pc-score-wrap">
+        <div class="pc-score" style="color:var(--red)">52</div>
+        <span class="ov-grade g-c">C</span>
+      </div>
+    </div>
+    <div class="pc-body">
+      <p class="sub-title">📡 네이버 최적화 신호</p>
+      <ul class="dot-list">
+        <li><span class="tag tag-bad">❌</span> 주소 불완전: "망원동 골목 끝" → 플레이스 색인 불가, postalCode 없음</li>
+        <li><span class="tag tag-bad">❌</span> 가상 전화번호: 네이버 플레이스 업체 검증 실패</li>
+        <li><span class="tag tag-bad">❌</span> 네이버 플레이스 URL sameAs 없음: 지역 검색 핵심 경로 단절</li>
+      </ul>
+      <p class="sub-title">💛 카카오 생태계 신호</p>
+      <ul class="dot-list">
+        <li><span class="tag tag-ok">✅</span> 카카오채널 연동: sameAs + CTA 버튼 존재 → 카카오맵 신뢰 신호 기여 가능</li>
+        <li><span class="tag tag-warn">⚠️</span> 카카오맵 임베드 없음: "오시는 길" 섹션 텍스트 전용, 지도 임베드 미존재</li>
+      </ul>
+      <p class="sub-title">❌ 핵심 문제점</p>
+      <ul class="dot-list">
+        <li><strong>네이버 플레이스 미등록 구조</strong> — 카페 검색 80% 이상이 이 경로, 홈페이지만 있으면 지역 검색 노출 제로</li>
+        <li>실 주소 부재 → 네이버 지도·카카오맵 핀 생성 불가</li>
+        <li>VIEW 탭(블로그·카페 리뷰) 유입 콘텐츠 없음</li>
+        <li>og:image 없음 → 네이버 카페·블로그 공유 시 썸네일 없음</li>
+        <li>canonical이 GitHub Pages URL → 실제 도메인 없이 신뢰도 낮음</li>
+      </ul>
+      <div class="verdict-box">
+        <p class="verdict-label">Verdict</p>
+        <p class="verdict-text">"한국어 키워드와 구조화 데이터는 준비되어 있으나, 실 주소·실 전화번호 부재와 네이버 플레이스 미연동으로 인해 한국 사용자가 카페를 찾는 핵심 경로에서 완전히 비가시적인 상태."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMON -->
+  <div class="common-section">
+    <p class="sec-label">Cross-Persona</p>
+    <h2 class="sec-title">공통 지적 사항</h2>
+    <div class="divider"></div>
+    <table class="common-table">
+      <thead>
+        <tr>
+          <th>문제</th>
+          <th>지적 페르소나 수</th>
+          <th>우선순위</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>실 도로명 주소 없음</td>
+          <td><span class="tag tag-bad">5 / 5</span></td>
+          <td><span class="tag tag-bad">🔴 최우선</span></td>
+        </tr>
+        <tr>
+          <td>og:image 없음</td>
+          <td><span class="tag tag-bad">4 / 5</span></td>
+          <td><span class="tag tag-bad">🔴 최우선</span></td>
+        </tr>
+        <tr>
+          <td>가상 전화번호 (02-123-4567)</td>
+          <td><span class="tag tag-warn">3 / 5</span></td>
+          <td><span class="tag tag-bad">🔴 최우선</span></td>
+        </tr>
+        <tr>
+          <td>지도 링크 없음 (카카오맵·네이버 지도)</td>
+          <td><span class="tag tag-warn">3 / 5</span></td>
+          <td><span class="tag tag-warn">🟡 중간</span></td>
+        </tr>
+        <tr>
+          <td>네이버 플레이스 미연동</td>
+          <td><span class="tag tag-warn">2 / 5</span></td>
+          <td><span class="tag tag-warn">🟡 중간</span></td>
+        </tr>
+        <tr>
+          <td>예약 카페 전달 여부 불분명</td>
+          <td><span class="tag tag-ok">1 / 5</span></td>
+          <td><span class="tag tag-warn">🟡 중간</span></td>
+        </tr>
+        <tr>
+          <td>sitemap lastmod 미래 날짜</td>
+          <td><span class="tag tag-ok">2 / 5</span></td>
+          <td><span class="tag tag-ok">🟢 낮음</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer class="doc-footer">
+  <p>모닝브루 &nbsp;·&nbsp; 페르소나별 SEO · GEO 평가 보고서 v1.0</p>
+  <p>작성일 <span>2026-06-23</span> &nbsp;·&nbsp; Day <span>06</span> &nbsp;·&nbsp; 5개 서브에이전트 병렬 평가</p>
+</footer>
+
+</body>
+</html>
