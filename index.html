@@ -425,11 +425,13 @@
     const badge      = document.getElementById('countBadge');
     const btnAdd     = document.getElementById('btnAdd');
 
-    /* 연락처 자동 하이픈 */
+    /* 연락처 자동 하이픈 — 010-####-#### 형식 강제 */
     inpContact.addEventListener('input', () => {
       let v = inpContact.value.replace(/\D/g, '').slice(0, 11);
-      if (v.length > 7)      v = v.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
-      else if (v.length > 3) v = v.replace(/(\d{3})(\d+)/, '$1-$2');
+      if (v.length > 0 && !v.startsWith('010')) v = '010' + v.replace(/^0*1*0*/, '');
+      v = v.slice(0, 11);
+      if (v.length > 7)      v = v.replace(/(\d{3})(\d{4})(\d{0,4})/, '$1-$2-$3');
+      else if (v.length > 3) v = v.replace(/(\d{3})(\d{0,4})/, '$1-$2');
       inpContact.value = v;
     });
 
@@ -442,7 +444,7 @@
       /* 유효성 검사 */
       const fields = [
         { el: inpName,    ok: name.length > 0 },
-        { el: inpContact, ok: contact.length > 0 },
+        { el: inpContact, ok: /^010-\d{4}-\d{4}$/.test(contact) },
         { el: inpTime,    ok: time !== '' },
         { el: inpGuests,  ok: guests !== '' && Number(guests) >= 1 },
       ];
