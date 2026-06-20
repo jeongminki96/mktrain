@@ -335,6 +335,30 @@
       color: var(--red);
       transform: scale(1.05);
     }
+
+    .btn-reset {
+      background: none;
+      border: 1.5px solid var(--latte);
+      border-radius: 10px;
+      color: var(--brown);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.3rem 0.75rem;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn-reset:hover {
+      background: #fdf0ee;
+      border-color: #e8a89e;
+      color: var(--red);
+    }
+    .btn-reset:disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -392,7 +416,10 @@
           <p class="section-eyebrow">Reservations</p>
           <h2 class="section-title">예약 목록</h2>
         </div>
-        <span class="count-badge" id="countBadge">0건</span>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="count-badge" id="countBadge">0건</span>
+          <button class="btn-reset" id="btnReset" onclick="clearAll()" disabled>전체 초기화</button>
+        </div>
       </div>
 
       <!-- 빈 상태 -->
@@ -412,9 +439,25 @@
   </main>
 
   <script>
-    // 임시 데이터 저장소 (내일 localStorage로 교체 예정)
-    let reservations = [];
-    let nextId = 1;
+    const STORAGE_KEY = 'morningbrew_reservations';
+
+    /* ── localStorage 헬퍼 ── */
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(reservations));
+    }
+
+    function loadFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    /* ── 상태 초기화 (localStorage에서 불러오기) ── */
+    let reservations = loadFromStorage();
+    let nextId = reservations.length > 0 ? Math.max(...reservations.map(r => r.id)) + 1 : 1;
 
     const inpName    = document.getElementById('inp-name');
     const inpContact = document.getElementById('inp-contact');
@@ -424,6 +467,7 @@
     const empty      = document.getElementById('emptyState');
     const badge      = document.getElementById('countBadge');
     const btnAdd     = document.getElementById('btnAdd');
+    const btnReset   = document.getElementById('btnReset');
 
     /* 연락처 자동 하이픈 — 010-####-#### 형식 강제 */
     inpContact.addEventListener('input', () => {
@@ -461,8 +505,9 @@
         return;
       }
 
-      /* 데이터 추가 */
+      /* 데이터 추가 + localStorage 저장 */
       reservations.push({ id: nextId++, name, contact, time, guests: Number(guests) });
+      saveToStorage();
       renderList();
       clearForm();
     }
@@ -472,12 +517,22 @@
       card.classList.add('removing');
       card.addEventListener('animationend', () => {
         reservations = reservations.filter(r => r.id !== id);
+        saveToStorage();
         renderList();
       }, { once: true });
     }
 
+    function clearAll() {
+      if (!confirm(`예약 ${reservations.length}건을 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`)) return;
+      reservations = [];
+      nextId = 1;
+      localStorage.removeItem(STORAGE_KEY);
+      renderList();
+    }
+
     function renderList() {
       badge.textContent = `${reservations.length}건`;
+      btnReset.disabled = reservations.length === 0;
 
       if (reservations.length === 0) {
         empty.classList.add('visible');
@@ -537,7 +592,7 @@
       el.addEventListener('keydown', e => { if (e.key === 'Enter') addReservation(); });
     });
 
-    /* 초기 렌더 */
+    /* 초기 렌더 (localStorage 불러온 데이터로) */
     renderList();
   </script>
 
