@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>예약 관리 — 모닝브루</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:    #FAF7F2;
+      --pale:     #F0E8D8;
+      --latte:    #E8D5BC;
+      --caramel:  #C17B3A;
+      --brown:    #7A5C3A;
+      --espresso: #1A1208;
+      --red:      #C0392B;
+      --shadow-sm: 0 2px 12px rgba(26,18,8,.08);
+      --shadow-md: 0 8px 32px rgba(26,18,8,.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--espresso);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 300;
+      min-height: 100svh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--espresso);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,.3);
+    }
+
+    .header-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem;
+      font-weight: 400;
+      color: var(--latte);
+      letter-spacing: -0.01em;
+    }
+    .header-logo em { color: var(--caramel); font-style: italic; }
+
+    .header-badge {
+      background: var(--caramel);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      font-weight: 400;
+      margin-bottom: 0.4rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem;
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--espresso);
+    }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--latte);
+    }
+
+    .form-card-header { margin-bottom: 1.5rem; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.875rem;
+    }
+    @media (max-width: 420px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--brown);
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid var(--latte);
+      border-radius: 12px;
+      background: var(--cream);
+      color: var(--espresso);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    input::placeholder { color: rgba(122,92,58,.4); }
+    input:focus {
+      border-color: var(--caramel);
+      box-shadow: 0 0 0 3px rgba(193,123,58,.14);
+    }
+    input[type="number"]::-webkit-inner-spin-button { opacity: 1; }
+
+    .form-divider {
+      height: 1px;
+      background: var(--latte);
+      margin: 1.25rem 0;
+    }
+
+    .btn-add {
+      width: 100%;
+      padding: 0.95rem 1.5rem;
+      background: var(--caramel);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.22s, transform 0.22s, box-shadow 0.22s;
+    }
+    .btn-add:hover {
+      background: var(--espresso);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26,18,8,.22);
+    }
+    .btn-add:active { transform: translateY(0); }
+
+    /* error shake */
+    .shake {
+      animation: shake 0.38s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      40%      { transform: translateX(6px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+
+    input.error {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(192,57,43,.13);
+    }
+
+    /* ── LIST SECTION ── */
+    .list-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .count-badge {
+      background: var(--pale);
+      color: var(--brown);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.2rem 0.65rem;
+      border-radius: 100px;
+      border: 1px solid var(--latte);
+      transition: background 0.2s;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      background: #fff;
+      border: 1.5px dashed var(--latte);
+      border-radius: 20px;
+      padding: 3.5rem 1.5rem;
+      text-align: center;
+      display: none;
+    }
+    .empty-state.visible { display: block; }
+
+    .empty-icon {
+      font-size: 2.75rem;
+      margin-bottom: 1rem;
+      display: block;
+      opacity: 0.6;
+    }
+    .empty-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--espresso);
+      margin-bottom: 0.5rem;
+    }
+    .empty-desc {
+      font-size: 0.82rem;
+      color: var(--brown);
+      line-height: 1.75;
+      opacity: 0.75;
+    }
+
+    /* ── RESERVATION LIST ── */
+    .reservation-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* ── RESERVATION CARD ── */
+    .res-card {
+      background: #fff;
+      border: 1px solid var(--latte);
+      border-radius: 16px;
+      padding: 1.15rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+      animation: slideIn 0.3s ease;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .res-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .res-card.removing {
+      animation: slideOut 0.28s ease forwards;
+    }
+    @keyframes slideOut {
+      to { opacity: 0; transform: translateX(24px) scale(0.96); }
+    }
+
+    .res-number {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      background: var(--pale);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--brown);
+    }
+
+    .res-info { flex: 1; min-width: 0; }
+
+    .res-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--espresso);
+      margin-bottom: 0.3rem;
+    }
+
+    .res-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.75rem;
+    }
+
+    .res-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.28rem;
+      font-size: 0.75rem;
+      color: var(--brown);
+      opacity: 0.85;
+    }
+    .res-chip svg { opacity: 0.6; flex-shrink: 0; }
+
+    .btn-delete {
+      background: none;
+      border: 1.5px solid var(--latte);
+      border-radius: 10px;
+      color: var(--brown);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.45rem 0.75rem;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-delete:hover {
+      background: #fdf0ee;
+      border-color: #e8a89e;
+      color: var(--red);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <span class="header-logo">모닝<em>브루</em></span>
+    <span class="header-badge">예약 관리</span>
+  </header>
+
+  <main class="page">
+
+    <!-- ── FORM ── -->
+    <section>
+      <div class="form-card">
+        <div class="form-card-header">
+          <p class="section-eyebrow">New Reservation</p>
+          <h1 class="section-title">예약 추가</h1>
+        </div>
+
+        <div class="form-grid" id="formGrid">
+          <div class="field">
+            <label for="inp-name">이름</label>
+            <input id="inp-name" type="text" placeholder="홍길동" maxlength="20">
+          </div>
+          <div class="field">
+            <label for="inp-contact">연락처</label>
+            <input id="inp-contact" type="tel" placeholder="010-0000-0000" maxlength="13">
+          </div>
+          <div class="field">
+            <label for="inp-time">픽업 시간</label>
+            <input id="inp-time" type="time" min="08:00" max="20:00">
+          </div>
+          <div class="field">
+            <label for="inp-guests">인원수</label>
+            <input id="inp-guests" type="number" placeholder="1" min="1" max="20">
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <button class="btn-add" id="btnAdd" onclick="addReservation()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          예약 추가
+        </button>
+      </div>
+    </section>
+
+    <!-- ── LIST ── -->
+    <section>
+      <div class="list-header" style="margin-bottom:1rem;">
+        <div>
+          <p class="section-eyebrow">Reservations</p>
+          <h2 class="section-title">예약 목록</h2>
+        </div>
+        <span class="count-badge" id="countBadge">0건</span>
+      </div>
+
+      <!-- 빈 상태 -->
+      <div class="empty-state visible" id="emptyState">
+        <span class="empty-icon">☕</span>
+        <p class="empty-title">아직 예약이 없습니다</p>
+        <p class="empty-desc">
+          첫 예약을 추가해 보세요!<br>
+          위 폼을 채우고 '예약 추가'를 눌러주세요.
+        </p>
+      </div>
+
+      <!-- 예약 카드 목록 -->
+      <div class="reservation-list" id="reservationList"></div>
+    </section>
+
+  </main>
+
+  <script>
+    // 임시 데이터 저장소 (내일 localStorage로 교체 예정)
+    let reservations = [];
+    let nextId = 1;
+
+    const inpName    = document.getElementById('inp-name');
+    const inpContact = document.getElementById('inp-contact');
+    const inpTime    = document.getElementById('inp-time');
+    const inpGuests  = document.getElementById('inp-guests');
+    const list       = document.getElementById('reservationList');
+    const empty      = document.getElementById('emptyState');
+    const badge      = document.getElementById('countBadge');
+    const btnAdd     = document.getElementById('btnAdd');
+
+    /* 연락처 자동 하이픈 */
+    inpContact.addEventListener('input', () => {
+      let v = inpContact.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 7)      v = v.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
+      else if (v.length > 3) v = v.replace(/(\d{3})(\d+)/, '$1-$2');
+      inpContact.value = v;
+    });
+
+    function addReservation() {
+      const name    = inpName.value.trim();
+      const contact = inpContact.value.trim();
+      const time    = inpTime.value;
+      const guests  = inpGuests.value;
+
+      /* 유효성 검사 */
+      const fields = [
+        { el: inpName,    ok: name.length > 0 },
+        { el: inpContact, ok: contact.length > 0 },
+        { el: inpTime,    ok: time !== '' },
+        { el: inpGuests,  ok: guests !== '' && Number(guests) >= 1 },
+      ];
+
+      let hasError = false;
+      fields.forEach(({ el, ok }) => {
+        el.classList.toggle('error', !ok);
+        if (!ok) hasError = true;
+      });
+
+      if (hasError) {
+        btnAdd.classList.add('shake');
+        btnAdd.addEventListener('animationend', () => btnAdd.classList.remove('shake'), { once: true });
+        return;
+      }
+
+      /* 데이터 추가 */
+      reservations.push({ id: nextId++, name, contact, time, guests: Number(guests) });
+      renderList();
+      clearForm();
+    }
+
+    function deleteReservation(id) {
+      const card = document.querySelector(`[data-id="${id}"]`);
+      card.classList.add('removing');
+      card.addEventListener('animationend', () => {
+        reservations = reservations.filter(r => r.id !== id);
+        renderList();
+      }, { once: true });
+    }
+
+    function renderList() {
+      badge.textContent = `${reservations.length}건`;
+
+      if (reservations.length === 0) {
+        empty.classList.add('visible');
+        list.innerHTML = '';
+        return;
+      }
+
+      empty.classList.remove('visible');
+      list.innerHTML = reservations.map((r, i) => `
+        <div class="res-card" data-id="${r.id}">
+          <div class="res-number">${i + 1}</div>
+          <div class="res-info">
+            <div class="res-name">${escHtml(r.name)}</div>
+            <div class="res-meta">
+              <span class="res-chip">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.1 1.18 2 2 0 012.08 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.41-.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                ${escHtml(r.contact)}
+              </span>
+              <span class="res-chip">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                픽업 ${formatTime(r.time)}
+              </span>
+              <span class="res-chip">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                ${r.guests}명
+              </span>
+            </div>
+          </div>
+          <button class="btn-delete" onclick="deleteReservation(${r.id})" aria-label="${escHtml(r.name)} 예약 삭제">삭제</button>
+        </div>
+      `).join('');
+    }
+
+    function clearForm() {
+      [inpName, inpContact, inpTime, inpGuests].forEach(el => {
+        el.value = '';
+        el.classList.remove('error');
+      });
+      inpName.focus();
+    }
+
+    function formatTime(t) {
+      if (!t) return '';
+      const [h, m] = t.split(':');
+      const hour = parseInt(h);
+      const ampm = hour < 12 ? '오전' : '오후';
+      const h12  = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      return `${ampm} ${h12}:${m}`;
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* Enter 키 제출 */
+    [inpName, inpContact, inpTime, inpGuests].forEach(el => {
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') addReservation(); });
+    });
+
+    /* 초기 렌더 */
+    renderList();
+  </script>
+
+</body>
+</html>
