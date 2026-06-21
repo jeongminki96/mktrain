@@ -947,7 +947,14 @@
     <p style="margin-top:.5rem;font-size:.72rem;">화–일 08:00–20:00 &nbsp;·&nbsp; 월요일 휴무</p>
   </footer>
 
+  <!-- Supabase JS (CDN, npm 설치 없이) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    /* ── Supabase 초기화 ── */
+    const SUPABASE_URL      = 'https://cjiqfjfztbbjmjxrdydy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_RG34orKuIx4Gdwtj5V-kIQ_oRUQEN55';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     /* ── IntersectionObserver (메뉴·정보 섹션 페이드인) ── */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
@@ -991,12 +998,15 @@
       inpContact.value = v;
     });
 
-    function addReservation() {
+    async function addReservation() {
+      if (btnAdd.disabled) return;                 // 중복 제출(클릭/Enter) 방지
+
       const name    = inpName.value.trim();
       const contact = inpContact.value.trim();
       const time    = inpTime.value;
       const guests  = inpGuests.value;
 
+      /* 필수값 검증 — 빈/형식 오류 시 제출하지 않음 */
       const fields = [
         { el: inpName,    ok: name.length > 0 },
         { el: inpContact, ok: /^010-\d{4}-\d{4}$/.test(contact) },
@@ -1011,11 +1021,30 @@
         return;
       }
 
-      reservations.push({ id: nextId++, name, contact, time, guests: Number(guests) });
-      saveToStorage();
-      renderList();
-      clearForm();
-      showToast(`✅ ${name}님 픽업 예약이 완료됐습니다`);
+      /* 제출 중 상태 (아이콘 보존 위해 innerHTML 백업) */
+      const btnHtml = btnAdd.innerHTML;
+      btnAdd.disabled = true;
+      btnAdd.textContent = '접수 중…';
+
+      try {
+        const { error } = await supabaseClient
+          .from('reservations')
+          .insert([{ name, contact, time, guests: Number(guests) }]);
+        if (error) throw error;
+
+        /* 성공 — 화면 목록에도 반영 후 폼 초기화 */
+        reservations.push({ id: nextId++, name, contact, time, guests: Number(guests) });
+        saveToStorage();
+        renderList();
+        clearForm();
+        showToast('예약이 접수되었습니다! 방문 전날 연락드리겠습니다.');
+      } catch (e) {
+        console.error('Supabase insert 실패:', e);
+        showToast('잠시 후 다시 시도해주세요.');
+      } finally {
+        btnAdd.disabled = false;
+        btnAdd.innerHTML = btnHtml;
+      }
     }
 
     function deleteReservation(id) {
