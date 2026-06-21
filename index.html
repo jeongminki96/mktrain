@@ -98,30 +98,91 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream:      #FAF7F2;
-      --pale:       #F0E8D8;
-      --espresso:   #1A1208;
-      --caramel:    #C17B3A;
-      --brown:      #7A5C3A;
-      --latte:      #E8D5BC;
-      --red:        #C0392B;
-      --shadow-sm:  0 2px 12px rgba(26,18,8,.08);
-      --shadow-md:  0 8px 32px rgba(26,18,8,.12);
+      /* ── Super Morning Green 팔레트 (쨍한 네온 그린) ── */
+      --night:    #021107;
+      --deep:     #04200E;
+      --navy:     #063015;
+      --blue:     #15A33C;
+      --azure:    #22C55E;
+      --sky:      #4ADE80;
+      --cyan:     #A3E635;
+      --glow:     #34D399;
+      --sun:      #FACC15;
+      --ice:      #ECFDF5;
+      --mist:     #A7D7B8;
+
+      /* 레거시 변수 매핑(인라인 참조 호환) */
+      --cream:    #04190B;
+      --pale:     #062a12;
+      --espresso: #021107;
+      --caramel:  #4ADE80;
+      --brown:    #A7D7B8;
+      --latte:    #ECFDF5;
+      --red:      #F43F5E;
+
+      --glass:       rgba(255,255,255,.05);
+      --glass-brd:   rgba(255,255,255,.12);
+      --shadow-sm:   0 4px 18px rgba(0,0,0,.35);
+      --shadow-md:   0 18px 50px rgba(2,8,28,.55);
+      --neon:        0 0 24px rgba(74,222,128,.55);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
 
     body {
-      background-color: var(--cream);
-      color: var(--espresso);
+      background-color: var(--night);
+      color: var(--ice);
       font-family: 'Noto Sans KR', sans-serif;
       font-weight: 300;
       overflow-x: hidden;
+      position: relative;
     }
+
+    /* ─── 오로라 / 메쉬 배경 ─── */
+    .aurora {
+      position: fixed;
+      inset: -20%;
+      z-index: -2;
+      background:
+        radial-gradient(40% 35% at 15% 12%, rgba(74,222,128,.30) 0%, transparent 60%),
+        radial-gradient(45% 40% at 85% 18%, rgba(34,197,94,.30) 0%, transparent 60%),
+        radial-gradient(50% 45% at 50% 95%, rgba(163,230,53,.22) 0%, transparent 60%),
+        radial-gradient(55% 50% at 80% 80%, rgba(251,191,36,.14) 0%, transparent 55%);
+      filter: blur(20px);
+      animation: auroraShift 18s ease-in-out infinite alternate;
+    }
+    @keyframes auroraShift {
+      0%   { transform: translate3d(0,0,0) scale(1);   }
+      50%  { transform: translate3d(3%,-2%,0) scale(1.08); }
+      100% { transform: translate3d(-3%,2%,0) scale(1.04); }
+    }
+    .grid-veil {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(120,255,170,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120,255,170,.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 0%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 0%, transparent 80%);
+    }
+
+    /* 떠다니는 광원 오브 */
+    .orb { position: fixed; border-radius: 50%; z-index: -1; filter: blur(30px); opacity: .5; pointer-events: none; }
+    .orb-1 { width: 280px; height: 280px; top: 8%;  left: -60px; background: radial-gradient(circle, var(--sky), transparent 70%); animation: float1 14s ease-in-out infinite; }
+    .orb-2 { width: 220px; height: 220px; top: 30%; right: -40px; background: radial-gradient(circle, var(--cyan), transparent 70%); animation: float2 17s ease-in-out infinite; }
+    @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(40px)} }
+    @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-50px)} }
+
+    ::selection { background: var(--sky); color: var(--night); }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(var(--azure), var(--cyan)); border-radius: 10px; }
 
     /* ─── HERO ─── */
     .hero {
@@ -135,35 +196,54 @@
       position: relative;
       overflow: hidden;
     }
-    .hero::before {
-      content: '';
+    .sun-halo {
       position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 40%, #F5EDD8 0%, var(--cream) 72%);
+      top: 14%;
+      left: 50%;
+      width: 420px; height: 420px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(251,191,36,.28) 0%, rgba(74,222,128,.10) 40%, transparent 70%);
+      animation: pulse 6s ease-in-out infinite;
+      z-index: 0;
     }
-    .hero-content { position: relative; z-index: 1; }
+    @keyframes pulse { 0%,100%{transform:translateX(-50%) scale(1);opacity:.8} 50%{transform:translateX(-50%) scale(1.12);opacity:1} }
+    .hero-content { position: relative; z-index: 2; }
 
     .hero-label {
+      display: inline-block;
       font-size: 0.72rem;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.32em;
       text-transform: uppercase;
-      color: var(--caramel);
-      margin-bottom: 2rem;
-      font-weight: 400;
+      color: var(--sky);
+      margin-bottom: 1.75rem;
+      font-weight: 500;
+      padding: 0.5rem 1.1rem;
+      border: 1px solid rgba(74,222,128,.35);
+      border-radius: 100px;
+      background: rgba(74,222,128,.07);
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 0 18px rgba(74,222,128,.12);
       opacity: 0;
       animation: fadeUp 0.8s ease forwards 0.2s;
     }
     .hero-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(4.5rem, 20vw, 9.5rem);
-      font-weight: 300;
-      line-height: 1;
+      font-size: clamp(4.5rem, 21vw, 10.5rem);
+      font-weight: 500;
+      line-height: 0.95;
       letter-spacing: -0.02em;
-      color: var(--espresso);
+      background: linear-gradient(120deg, #ECFDF5 0%, var(--sky) 34%, var(--cyan) 62%, #BEF264 100%);
+      background-size: 220% 220%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 6px 40px rgba(74,222,128,.45));
+      animation: fadeUp 0.9s ease forwards 0.4s, gradFlow 8s ease infinite;
       opacity: 0;
-      animation: fadeUp 0.9s ease forwards 0.4s;
     }
-    .hero-title em { color: var(--caramel); font-style: italic; }
+    .hero-title em { font-style: italic; }
+    @keyframes gradFlow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
 
     .steam-wrap {
       display: flex;
@@ -178,23 +258,24 @@
     .steam-line {
       width: 2.5px;
       border-radius: 50px;
-      background: linear-gradient(to top, var(--caramel) 0%, transparent 100%);
+      background: linear-gradient(to top, var(--cyan) 0%, transparent 100%);
+      box-shadow: 0 0 10px var(--sky);
       animation: steamRise 2.2s ease-in-out infinite;
     }
     .steam-line:nth-child(1) { height: 38px; animation-delay: 0s; }
     .steam-line:nth-child(2) { height: 52px; animation-delay: 0.5s; }
     .steam-line:nth-child(3) { height: 32px; animation-delay: 1s; }
     @keyframes steamRise {
-      0%   { transform: translateY(0)     scaleX(1);   opacity: 0.65; }
-      50%  { transform: translateY(-18px) scaleX(1.6); opacity: 0.28; }
+      0%   { transform: translateY(0)     scaleX(1);   opacity: 0.75; }
+      50%  { transform: translateY(-18px) scaleX(1.6); opacity: 0.32; }
       100% { transform: translateY(-32px) scaleX(0.4); opacity: 0; }
     }
 
     .hero-sub {
-      font-size: clamp(0.88rem, 3vw, 1rem);
-      color: var(--brown);
+      font-size: clamp(0.88rem, 3vw, 1.02rem);
+      color: var(--mist);
       line-height: 2;
-      max-width: 320px;
+      max-width: 340px;
       margin: 0 auto 2.75rem;
       opacity: 0;
       animation: fadeUp 0.9s ease forwards 0.7s;
@@ -209,39 +290,42 @@
     }
 
     .btn-fill {
-      background: var(--caramel);
-      color: #fff;
-      padding: 0.85rem 1.9rem;
+      position: relative;
+      background: linear-gradient(120deg, var(--azure), var(--cyan));
+      color: #04081C;
+      padding: 0.9rem 2.1rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      border: none;
+      box-shadow: 0 8px 28px rgba(74,222,128,.45), inset 0 1px 0 rgba(255,255,255,.5);
+      transition: transform 0.28s, box-shadow 0.28s, filter 0.28s;
+    }
+    .btn-fill:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.08);
+      box-shadow: 0 14px 40px rgba(74,222,128,.6), inset 0 1px 0 rgba(255,255,255,.6);
+    }
+    .btn-ghost {
+      background: var(--glass);
+      color: var(--ice);
+      padding: 0.9rem 2.1rem;
       border-radius: 100px;
       text-decoration: none;
       font-size: 0.85rem;
       letter-spacing: 0.04em;
       font-weight: 500;
-      border: 2px solid var(--caramel);
+      border: 1.5px solid var(--glass-brd);
+      backdrop-filter: blur(10px);
       transition: background 0.28s, border-color 0.28s, transform 0.28s, box-shadow 0.28s;
     }
-    .btn-fill:hover {
-      background: var(--espresso);
-      border-color: var(--espresso);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(26,18,8,.22);
-    }
-    .btn-ghost {
-      background: transparent;
-      color: var(--espresso);
-      padding: 0.85rem 1.9rem;
-      border-radius: 100px;
-      text-decoration: none;
-      font-size: 0.85rem;
-      letter-spacing: 0.04em;
-      font-weight: 400;
-      border: 1.5px solid var(--espresso);
-      transition: background 0.28s, color 0.28s, transform 0.28s;
-    }
     .btn-ghost:hover {
-      background: var(--espresso);
-      color: var(--cream);
-      transform: translateY(-2px);
+      background: rgba(74,222,128,.12);
+      border-color: var(--sky);
+      transform: translateY(-3px);
+      box-shadow: var(--neon);
     }
 
     .scroll-hint {
@@ -253,13 +337,15 @@
       flex-direction: column;
       align-items: center;
       gap: 6px;
+      z-index: 2;
       opacity: 0;
       animation: fadeIn 1.2s ease forwards 1.6s;
     }
     .scroll-hint-line {
-      width: 1px;
+      width: 1.5px;
       height: 44px;
-      background: linear-gradient(to bottom, var(--caramel), transparent);
+      background: linear-gradient(to bottom, var(--sky), transparent);
+      box-shadow: 0 0 8px var(--sky);
       animation: scrollBob 1.8s ease-in-out infinite;
     }
     @keyframes scrollBob {
@@ -272,126 +358,155 @@
       font-size: 0.68rem;
       letter-spacing: 0.35em;
       text-transform: uppercase;
-      color: var(--caramel);
+      color: var(--sky);
       margin-bottom: 0.6rem;
-      font-weight: 400;
+      font-weight: 600;
     }
     .section-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 8vw, 3.25rem);
-      font-weight: 400;
+      font-size: clamp(2.1rem, 8vw, 3.5rem);
+      font-weight: 500;
       line-height: 1.1;
+      color: var(--ice);
     }
     .divider {
-      width: 36px;
-      height: 1.5px;
-      background: var(--caramel);
+      width: 44px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--sky), var(--cyan));
+      border-radius: 4px;
+      box-shadow: 0 0 12px rgba(74,222,128,.6);
       margin: 1.4rem 0;
     }
 
     /* ─── MENU ─── */
     #menu {
-      background: var(--espresso);
-      padding: 5rem 1.5rem;
+      background: linear-gradient(180deg, var(--night) 0%, var(--deep) 100%);
+      padding: 6rem 1.5rem;
+      position: relative;
     }
-    .menu-header { text-align: center; margin-bottom: 3rem; }
-    .menu-header .section-title { color: var(--latte); }
+    .menu-header { text-align: center; margin-bottom: 3.25rem; }
     .menu-header .divider { margin: 1.4rem auto; }
-    .menu-header p { font-size: 0.875rem; color: rgba(250,247,242,.55); line-height: 1.9; }
+    .menu-header p { font-size: 0.9rem; color: var(--mist); line-height: 1.9; }
 
     .menu-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.9rem;
-      max-width: 560px;
+      gap: 1rem;
+      max-width: 580px;
       margin: 0 auto;
     }
     @media (min-width: 480px) { .menu-grid { grid-template-columns: 1fr 1fr; } }
 
     .menu-card {
-      background: rgba(250,247,242,.04);
-      border: 1px solid rgba(250,247,242,.1);
-      border-radius: 18px;
-      padding: 1.7rem 1.5rem;
+      position: relative;
+      background: var(--glass);
+      border: 1px solid var(--glass-brd);
+      border-radius: 20px;
+      padding: 1.8rem 1.6rem;
       cursor: default;
+      backdrop-filter: blur(12px);
+      overflow: hidden;
       opacity: 0;
       transform: translateY(22px);
       transition: opacity 0.5s ease, transform 0.5s ease, background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .menu-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(120% 80% at 0% 0%, rgba(74,222,128,.16), transparent 55%);
+      opacity: 0; transition: opacity 0.35s;
     }
     .menu-card:nth-child(2) { transition-delay: 0.08s; }
     .menu-card:nth-child(3) { transition-delay: 0.16s; }
     .menu-card:nth-child(4) { transition-delay: 0.24s; }
     .menu-card.in { opacity: 1; transform: translateY(0); }
     .menu-card:hover {
-      background: rgba(250,247,242,.08);
-      border-color: rgba(193,123,58,.45);
-      transform: translateY(-5px);
-      box-shadow: 0 18px 44px rgba(0,0,0,.35);
+      border-color: rgba(74,222,128,.5);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 50px rgba(2,8,28,.6), var(--neon);
     }
-    .menu-icon { font-size: 1.4rem; margin-bottom: 0.9rem; }
-    .menu-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 500; color: var(--latte); margin-bottom: 0.35rem; }
-    .menu-note { font-size: 0.78rem; color: rgba(250,247,242,.45); line-height: 1.75; margin-bottom: 1rem; }
-    .menu-price { font-size: 0.975rem; color: var(--caramel); font-weight: 500; letter-spacing: 0.02em; }
+    .menu-card:hover::before { opacity: 1; }
+    .menu-icon { font-size: 1.6rem; margin-bottom: 0.9rem; position: relative; filter: drop-shadow(0 0 10px rgba(74,222,128,.4)); }
+    .menu-name { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--ice); margin-bottom: 0.35rem; position: relative; }
+    .menu-note { font-size: 0.8rem; color: var(--mist); line-height: 1.75; margin-bottom: 1rem; position: relative; }
+    .menu-price {
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.02em; position: relative;
+      background: linear-gradient(90deg, var(--sky), var(--cyan));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
 
     /* ─── INFO ─── */
-    #info { background: var(--pale); padding: 5rem 1.5rem; }
+    #info { background: var(--deep); padding: 6rem 1.5rem; }
     .info-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 3rem;
-      max-width: 560px;
+      gap: 1.25rem;
+      max-width: 580px;
       margin: 0 auto;
     }
     @media (min-width: 600px) { .info-grid { grid-template-columns: 1fr 1fr; } }
-    .info-block { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .info-block {
+      background: var(--glass);
+      border: 1px solid var(--glass-brd);
+      border-radius: 20px;
+      padding: 2rem 1.75rem;
+      backdrop-filter: blur(12px);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s, box-shadow 0.3s;
+    }
+    .info-block:hover { border-color: rgba(74,222,128,.4); box-shadow: var(--neon); }
     .info-block:nth-child(2) { transition-delay: 0.15s; }
     .info-block.in { opacity: 1; transform: translateY(0); }
-    .info-block-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 500; color: var(--espresso); margin-bottom: 1.2rem; }
+    .info-block-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; color: var(--ice); margin-bottom: 1.2rem; }
     .info-row { display: flex; gap: 0.7rem; margin-bottom: 0.8rem; align-items: flex-start; }
-    .dot { width: 5px; height: 5px; background: var(--caramel); border-radius: 50%; margin-top: 0.55rem; flex-shrink: 0; }
-    .info-text { font-size: 0.875rem; color: var(--brown); line-height: 1.75; }
-    .info-text strong { color: var(--espresso); font-weight: 500; }
+    .dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; margin-top: 0.55rem; flex-shrink: 0; box-shadow: 0 0 8px var(--cyan); }
+    .info-text { font-size: 0.9rem; color: var(--mist); line-height: 1.75; }
+    .info-text strong { color: var(--ice); font-weight: 500; }
     .tag-closed {
       display: inline-block;
-      background: var(--caramel);
-      color: #fff;
+      background: linear-gradient(120deg, var(--azure), var(--cyan));
+      color: #04081C;
       font-size: 0.65rem;
-      padding: 0.12rem 0.45rem;
-      border-radius: 4px;
+      font-weight: 700;
+      padding: 0.14rem 0.5rem;
+      border-radius: 5px;
       margin-left: 0.4rem;
       vertical-align: middle;
       letter-spacing: 0.05em;
     }
 
     /* ─── CTA ─── */
-    #contact { background: var(--cream); padding: 5.5rem 1.5rem 6.5rem; text-align: center; }
+    #contact { background: linear-gradient(180deg, var(--deep) 0%, var(--night) 100%); padding: 6rem 1.5rem; text-align: center; }
     .cta-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 8vw, 3rem);
-      font-weight: 400;
+      font-size: clamp(2.1rem, 8vw, 3.2rem);
+      font-weight: 500;
       font-style: italic;
-      color: var(--espresso);
+      color: var(--ice);
       margin: 0.6rem 0 0.9rem;
+      text-shadow: 0 0 40px rgba(74,222,128,.3);
     }
-    .cta-sub { font-size: 0.875rem; color: var(--brown); line-height: 1.9; margin-bottom: 2.5rem; }
-    .cta-btns { display: flex; flex-direction: column; gap: 0.875rem; align-items: center; max-width: 300px; margin: 0 auto; }
+    .cta-sub { font-size: 0.9rem; color: var(--mist); line-height: 1.9; margin-bottom: 2.5rem; }
+    .cta-btns { display: flex; flex-direction: column; gap: 0.875rem; align-items: center; max-width: 320px; margin: 0 auto; }
     .btn-kakao {
       display: flex; align-items: center; justify-content: center; gap: 0.7rem;
       width: 100%; padding: 1rem 1.75rem; border-radius: 100px;
-      text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.03em;
+      text-decoration: none; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.03em;
       color: #3C1E1E; background: #FEE500;
       box-shadow: 0 4px 18px rgba(254,229,0,.35);
       transition: transform 0.28s, box-shadow 0.28s, background 0.28s;
     }
-    .btn-kakao:hover { background: #F5D900; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(254,229,0,.45); }
+    .btn-kakao:hover { background: #F5D900; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(254,229,0,.5); }
 
     /* 토스트 */
     .toast {
       position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: var(--espresso); color: var(--cream);
-      padding: 0.75rem 1.5rem; border-radius: 100px;
+      background: rgba(8,17,50,.92); color: var(--ice);
+      padding: 0.8rem 1.6rem; border-radius: 100px;
+      border: 1px solid rgba(74,222,128,.35);
+      backdrop-filter: blur(10px);
       font-size: 0.85rem; font-weight: 400; letter-spacing: 0.02em;
-      box-shadow: 0 8px 28px rgba(26,18,8,.28);
+      box-shadow: 0 8px 32px rgba(2,8,28,.6), var(--neon);
       opacity: 0; pointer-events: none;
       transition: opacity 0.28s ease, transform 0.28s ease;
       z-index: 9999; white-space: nowrap;
@@ -400,27 +515,28 @@
     .btn-insta {
       display: flex; align-items: center; justify-content: center; gap: 0.7rem;
       width: 100%; padding: 1rem 1.75rem; border-radius: 100px;
-      text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.03em;
+      text-decoration: none; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.03em;
       color: #fff;
       background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      box-shadow: 0 4px 18px rgba(220,39,67,.28);
+      box-shadow: 0 4px 18px rgba(220,39,67,.35);
       transition: transform 0.28s, box-shadow 0.28s;
     }
-    .btn-insta:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(220,39,67,.38); }
+    .btn-insta:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(220,39,67,.5); }
     .btn-tel {
       display: flex; align-items: center; justify-content: center; gap: 0.7rem;
       width: 100%; padding: 1rem 1.75rem; border-radius: 100px;
-      text-decoration: none; font-size: 0.875rem; font-weight: 400; letter-spacing: 0.03em;
-      color: var(--cream); background: var(--espresso);
-      transition: background 0.28s, transform 0.28s, box-shadow 0.28s;
+      text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.03em;
+      color: var(--ice); background: var(--glass); border: 1.5px solid var(--glass-brd);
+      backdrop-filter: blur(10px);
+      transition: background 0.28s, border-color 0.28s, transform 0.28s, box-shadow 0.28s;
     }
-    .btn-tel:hover { background: var(--caramel); transform: translateY(-3px); box-shadow: 0 8px 22px rgba(193,123,58,.32); }
+    .btn-tel:hover { background: rgba(74,222,128,.12); border-color: var(--sky); transform: translateY(-3px); box-shadow: var(--neon); }
 
     /* ─── RESERVATION ─── */
-    #reservation { background: var(--pale); padding: 5rem 1.5rem 6rem; }
+    #reservation { background: var(--night); padding: 6rem 1.5rem; }
 
     .res-page {
-      max-width: 640px;
+      max-width: 660px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -430,26 +546,27 @@
 
     /* 폼 카드 */
     .form-card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 1.75rem 1.5rem;
+      background: var(--glass);
+      border-radius: 22px;
+      padding: 2rem 1.75rem;
       box-shadow: var(--shadow-md);
-      border: 1px solid var(--latte);
+      border: 1px solid var(--glass-brd);
+      backdrop-filter: blur(14px);
     }
     .form-card-header { margin-bottom: 1.5rem; }
     .form-eyebrow {
       font-size: 0.65rem;
       letter-spacing: 0.35em;
       text-transform: uppercase;
-      color: var(--caramel);
-      font-weight: 400;
+      color: var(--sky);
+      font-weight: 600;
       margin-bottom: 0.4rem;
     }
     .form-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.75rem;
-      font-weight: 400;
-      color: var(--espresso);
+      font-size: 1.85rem;
+      font-weight: 600;
+      color: var(--ice);
     }
 
     .form-grid {
@@ -463,57 +580,61 @@
 
     .field label {
       font-size: 0.72rem;
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--brown);
+      color: var(--mist);
     }
     .field input {
       width: 100%;
-      padding: 0.8rem 1rem;
-      border: 1.5px solid var(--latte);
+      padding: 0.85rem 1rem;
+      border: 1.5px solid var(--glass-brd);
       border-radius: 12px;
-      background: var(--cream);
-      color: var(--espresso);
+      background: rgba(4,8,28,.5);
+      color: var(--ice);
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 0.9rem;
       font-weight: 400;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
       -webkit-appearance: none;
     }
-    .field input::placeholder { color: rgba(122,92,58,.4); }
+    .field input::placeholder { color: rgba(157,180,216,.4); }
     .field input:focus {
-      border-color: var(--caramel);
-      box-shadow: 0 0 0 3px rgba(193,123,58,.14);
+      border-color: var(--sky);
+      background: rgba(74,222,128,.06);
+      box-shadow: 0 0 0 3px rgba(74,222,128,.18);
     }
     .field input.error {
       border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(192,57,43,.13);
+      box-shadow: 0 0 0 3px rgba(244,63,94,.18);
     }
+    .field input[type="time"]::-webkit-calendar-picker-indicator,
+    .field input[type="time"]::-webkit-datetime-edit { filter: invert(.7) brightness(1.5); }
     input[type="number"]::-webkit-inner-spin-button { opacity: 1; }
 
-    .form-divider { height: 1px; background: var(--latte); margin: 1.25rem 0; }
+    .form-divider { height: 1px; background: var(--glass-brd); margin: 1.25rem 0; }
 
     .btn-add {
       width: 100%;
-      padding: 0.95rem 1.5rem;
-      background: var(--caramel);
-      color: #fff;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(120deg, var(--azure), var(--cyan));
+      color: #04081C;
       border: none;
       border-radius: 12px;
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 0.9rem;
-      font-weight: 500;
+      font-weight: 700;
       letter-spacing: 0.04em;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      transition: background 0.22s, transform 0.22s, box-shadow 0.22s;
+      box-shadow: 0 8px 26px rgba(74,222,128,.4), inset 0 1px 0 rgba(255,255,255,.5);
+      transition: filter 0.22s, transform 0.22s, box-shadow 0.22s;
     }
-    .btn-add:hover { background: var(--espresso); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,18,8,.22); }
+    .btn-add:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 14px 38px rgba(74,222,128,.55); }
     .btn-add:active { transform: translateY(0); }
 
     .shake { animation: shake 0.38s ease; }
@@ -533,59 +654,60 @@
       margin-bottom: 1rem;
     }
     .count-badge {
-      background: #fff;
-      color: var(--brown);
+      background: rgba(74,222,128,.12);
+      color: var(--sky);
       font-size: 0.72rem;
-      font-weight: 500;
-      padding: 0.2rem 0.65rem;
+      font-weight: 600;
+      padding: 0.22rem 0.7rem;
       border-radius: 100px;
-      border: 1px solid var(--latte);
+      border: 1px solid rgba(74,222,128,.3);
     }
     .btn-reset {
       background: none;
-      border: 1.5px solid var(--latte);
+      border: 1.5px solid var(--glass-brd);
       border-radius: 10px;
-      color: var(--brown);
+      color: var(--mist);
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 0.72rem;
       font-weight: 500;
-      padding: 0.3rem 0.75rem;
+      padding: 0.32rem 0.78rem;
       cursor: pointer;
       letter-spacing: 0.03em;
       transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
-    .btn-reset:hover { background: #fdf0ee; border-color: #e8a89e; color: var(--red); }
+    .btn-reset:hover { background: rgba(244,63,94,.12); border-color: rgba(244,63,94,.5); color: var(--red); }
     .btn-reset:disabled { opacity: 0.35; cursor: default; pointer-events: none; }
 
     /* 빈 상태 */
     .empty-state {
-      background: #fff;
-      border: 1.5px dashed var(--latte);
+      background: var(--glass);
+      border: 1.5px dashed var(--glass-brd);
       border-radius: 20px;
       padding: 3.5rem 1.5rem;
       text-align: center;
       display: none;
     }
     .empty-state.visible { display: block; }
-    .empty-icon { font-size: 2.75rem; margin-bottom: 1rem; display: block; opacity: 0.6; }
-    .empty-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; color: var(--espresso); margin-bottom: 0.5rem; }
-    .empty-desc { font-size: 0.82rem; color: var(--brown); line-height: 1.75; opacity: 0.75; }
+    .empty-icon { font-size: 2.75rem; margin-bottom: 1rem; display: block; opacity: 0.7; filter: drop-shadow(0 0 14px rgba(74,222,128,.4)); }
+    .empty-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--ice); margin-bottom: 0.5rem; }
+    .empty-desc { font-size: 0.82rem; color: var(--mist); line-height: 1.75; opacity: 0.8; }
 
     /* 예약 카드 */
     .reservation-list { display: flex; flex-direction: column; gap: 0.75rem; }
     .res-card {
-      background: #fff;
-      border: 1px solid var(--latte);
+      background: var(--glass);
+      border: 1px solid var(--glass-brd);
       border-radius: 16px;
       padding: 1.15rem 1.25rem;
       display: flex;
       align-items: center;
       gap: 1rem;
+      backdrop-filter: blur(10px);
       box-shadow: var(--shadow-sm);
       animation: slideIn 0.3s ease;
-      transition: box-shadow 0.2s, transform 0.2s;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
     }
-    .res-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .res-card:hover { box-shadow: var(--shadow-md), var(--neon); transform: translateY(-2px); border-color: rgba(74,222,128,.4); }
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -595,76 +717,79 @@
       to { opacity: 0; transform: translateX(24px) scale(0.96); }
     }
     .res-number {
-      width: 32px; height: 32px; min-width: 32px;
-      background: var(--pale);
+      width: 34px; height: 34px; min-width: 34px;
+      background: linear-gradient(135deg, var(--azure), var(--cyan));
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 500; color: var(--brown);
+      font-size: 0.74rem; font-weight: 700; color: #04081C;
+      box-shadow: 0 0 14px rgba(74,222,128,.45);
     }
     .res-info { flex: 1; min-width: 0; }
-    .res-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 500; color: var(--espresso); margin-bottom: 0.3rem; }
+    .res-name { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 600; color: var(--ice); margin-bottom: 0.3rem; }
     .res-meta { display: flex; flex-wrap: wrap; gap: 0.4rem 0.75rem; }
-    .res-chip { display: flex; align-items: center; gap: 0.28rem; font-size: 0.75rem; color: var(--brown); opacity: 0.85; }
-    .res-chip svg { opacity: 0.6; flex-shrink: 0; }
+    .res-chip { display: flex; align-items: center; gap: 0.28rem; font-size: 0.75rem; color: var(--mist); }
+    .res-chip svg { opacity: 0.7; flex-shrink: 0; color: var(--sky); }
     .btn-delete {
       background: none;
-      border: 1.5px solid var(--latte);
+      border: 1.5px solid var(--glass-brd);
       border-radius: 10px;
-      color: var(--brown);
+      color: var(--mist);
       font-size: 0.72rem; font-weight: 500;
-      padding: 0.45rem 0.75rem;
+      padding: 0.45rem 0.78rem;
       cursor: pointer; letter-spacing: 0.03em;
       transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
       flex-shrink: 0;
     }
-    .btn-delete:hover { background: #fdf0ee; border-color: #e8a89e; color: var(--red); transform: scale(1.05); }
+    .btn-delete:hover { background: rgba(244,63,94,.12); border-color: rgba(244,63,94,.5); color: var(--red); transform: scale(1.05); }
 
     /* ─── FOOTER ─── */
     footer {
-      background: var(--espresso);
-      color: rgba(250,247,242,.38);
+      background: var(--night);
+      border-top: 1px solid var(--glass-brd);
+      color: var(--mist);
       text-align: center;
-      padding: 2rem 1.5rem;
+      padding: 2.5rem 1.5rem;
       font-size: 0.78rem;
       line-height: 2.1;
     }
-    footer a { color: var(--caramel); text-decoration: none; }
+    footer a { color: var(--sky); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
 
     /* ─── FAQ ─── */
-    #faq { background: var(--cream); padding: 5rem 1.5rem 6rem; }
-    .faq-wrap { max-width: 640px; margin: 0 auto; }
+    #faq { background: linear-gradient(180deg, var(--night) 0%, var(--deep) 100%); padding: 6rem 1.5rem; }
+    .faq-wrap { max-width: 660px; margin: 0 auto; }
     .faq-header { margin-bottom: 2.5rem; }
     .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
     .faq-item {
-      background: #fff;
-      border: 1px solid var(--latte);
+      background: var(--glass);
+      border: 1px solid var(--glass-brd);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(26,18,8,.05);
+      backdrop-filter: blur(10px);
     }
     .faq-q {
       width: 100%; text-align: left;
       background: none; border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: space-between;
-      gap: 1rem; padding: 1.15rem 1.4rem;
+      gap: 1rem; padding: 1.2rem 1.4rem;
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 0.9rem; font-weight: 500; color: var(--espresso);
+      font-size: 0.9rem; font-weight: 500; color: var(--ice);
       line-height: 1.5;
       transition: background 0.2s;
     }
-    .faq-q:hover { background: var(--pale); }
-    .faq-q[aria-expanded="true"] { background: var(--pale); }
+    .faq-q:hover { background: rgba(74,222,128,.06); }
+    .faq-q[aria-expanded="true"] { background: rgba(74,222,128,.08); }
     .faq-icon {
-      width: 22px; height: 22px; min-width: 22px; border-radius: 50%;
-      background: var(--latte); display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; min-width: 24px; border-radius: 50%;
+      background: rgba(74,222,128,.14); display: flex; align-items: center; justify-content: center;
       transition: transform 0.3s, background 0.2s;
     }
-    .faq-q[aria-expanded="true"] .faq-icon { transform: rotate(45deg); background: var(--caramel); }
-    .faq-q[aria-expanded="true"] .faq-icon svg { stroke: #fff; }
+    .faq-q[aria-expanded="true"] .faq-icon { transform: rotate(45deg); background: linear-gradient(135deg, var(--azure), var(--cyan)); box-shadow: 0 0 14px rgba(74,222,128,.5); }
+    .faq-q[aria-expanded="true"] .faq-icon svg { stroke: #04081C; }
     .faq-a {
       max-height: 0; overflow: hidden;
       transition: max-height 0.35s ease, padding 0.3s ease;
-      font-size: 0.875rem; color: var(--brown); line-height: 1.85;
+      font-size: 0.875rem; color: var(--mist); line-height: 1.85;
       padding: 0 1.4rem;
     }
     .faq-a.open { max-height: 300px; padding: 0 1.4rem 1.2rem; }
@@ -678,12 +803,23 @@
       from { opacity: 0; }
       to   { opacity: 1; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- 배경 레이어 -->
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="grid-veil" aria-hidden="true"></div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+
   <!-- ── HERO ── -->
   <section class="hero">
+    <div class="sun-halo" aria-hidden="true"></div>
     <div class="hero-content">
       <p class="hero-label">서울 마포구 망원동 &nbsp;·&nbsp; 스페셜티 핸드드립 카페</p>
       <h1 class="hero-title">모닝<em>브루</em></h1>
@@ -712,7 +848,7 @@
   <section id="menu">
     <div class="menu-header">
       <p class="section-label">Our Menu</p>
-      <h2 class="section-title" style="color:var(--latte);">오늘의 메뉴</h2>
+      <h2 class="section-title">오늘의 메뉴</h2>
       <div class="divider" style="margin:1.4rem auto;"></div>
       <p>신선한 원두를 매일 직접 선별하고,<br>스콘은 매일 아침 굽습니다.</p>
     </div>
@@ -886,7 +1022,7 @@
         <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
             <span itemprop="name">모닝브루는 몇 시에 문을 여나요?</span>
-            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </button>
           <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
             <div itemprop="text">화요일부터 일요일까지 오전 8시에 열고 오후 8시에 닫습니다. 월요일은 정기 휴무입니다.</div>
@@ -896,7 +1032,7 @@
         <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
             <span itemprop="name">픽업 예약은 어떻게 하나요?</span>
-            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </button>
           <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
             <div itemprop="text">카카오 채널 또는 홈페이지 예약 폼으로 미리 주문하시면, 도착하는 즉시 픽업하실 수 있습니다. 대기 없이 원하는 시간에 바로 받아가실 수 있습니다.</div>
@@ -906,7 +1042,7 @@
         <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
             <span itemprop="name">망원역에서 모닝브루까지 어떻게 가나요?</span>
-            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </button>
           <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
             <div itemprop="text">지하철 6호선 망원역 2번 출구에서 도보로 약 6분 거리입니다. 서울 마포구 망원동 골목 안쪽에 위치해 있습니다.</div>
@@ -916,7 +1052,7 @@
         <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
             <span itemprop="name">오늘의 원두는 어디서 확인하나요?</span>
-            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </button>
           <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
             <div itemprop="text">매일 오전 7시 30분 이전에 인스타그램 스토리(@morningbrew_official)에 당일 원두 산지와 스콘 재고를 공지합니다. 방문 전 미리 확인하세요.</div>
@@ -926,7 +1062,7 @@
         <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
             <span itemprop="name">핸드드립 커피 가격이 얼마인가요?</span>
-            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span class="faq-icon" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </button>
           <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
             <div itemprop="text">핸드드립 커피 5,500원, 오늘의 원두 4,500원, 수제 스콘 3,500원, 계절 과일 에이드 6,000원입니다. 스콘은 매일 아침 직접 구워 재고가 소진될 수 있습니다.</div>
